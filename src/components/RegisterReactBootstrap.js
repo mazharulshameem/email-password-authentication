@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification,  } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, updateProfile,  } from 'firebase/auth';
 import React, { useState } from 'react';
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -15,9 +15,10 @@ const RegisterReactBootstrap = () => {
     setSuccess(false);
     event.preventDefault();
     const form =event.target;
+    const name = form.name.value;
     const email =form.email.value;
     const password = form.password.value;
-    console.log(email, password);
+    console.log(name, email, password);
     if (!/(?=.*[A-Z].*[A-Z])/.test(password)){
         setPasswordError('Please, provide at least two Uppercase letters')
         return;
@@ -39,6 +40,7 @@ const RegisterReactBootstrap = () => {
           setSuccess(true);
           form.reset();
           verifyEmail();
+          updateUserName(name)
         })
         .catch((error) => {
           console.error("error:", error);
@@ -52,23 +54,30 @@ const RegisterReactBootstrap = () => {
      alert('Please check your email address and verification your email.')
    });
   }
+  const updateUserName = (name) => {
+    updateProfile(auth.currentUser,{
+      displayName:name
+
+    })
+    .then(() => {
+      console.log('Updated profile Name')
+    })
+    .catch((error) =>{
+      console.error("error:", error)
+    })
+  }
+
 
   return (
     <div className="w-25 mx-auto">
       <h2 className=" text-primary mt-5"> Register Now !!!</h2>
       <Form onSubmit={handleRegister}>
 
-       <div className='d-flex justify-content-start'>
-         <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>First Name</Form.Label>
-          <Form.Control type="text" name=" First Name" placeholder="Enter First Name"  />
+         <Form.Group className="mb-3" controlId="formBasicName">
+          <Form.Label>Full Name</Form.Label>
+          <Form.Control type="text" name="name" placeholder="Enter Full Name" required  />
         </Form.Group>
-         <Form.Group className="mb-3  " controlId="formBasicEmail">
-          <Form.Label>Last Name</Form.Label>
-          <Form.Control type="text" name=" Last Name" placeholder="Enter last Name"  />
-        </Form.Group>
-       </div>
-
+       
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control type="email" name="email" placeholder="Enter email" required />

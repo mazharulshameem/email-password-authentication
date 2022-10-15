@@ -9,6 +9,7 @@ const auth = getAuth(app);
 
 const Login = () => {
    const [success, setSuccess] = useState(false);
+   const [userEmail, setUserEmail] = useState("");
   const handleLogin = event => {
   event.preventDefault ();
   setSuccess(false);
@@ -28,8 +29,25 @@ const Login = () => {
         });
   }
 
+   const handleEmailBlur = (event) => {
+     const email = event.target.value;
+     setUserEmail(email);
+     console.log(email);
+   }
+
+
    const handleForgotPassword = () => {
-     sendPasswordResetEmail(auth, )
+    if (!userEmail){
+      alert("Please enter your email")
+      return;
+    }
+     sendPasswordResetEmail(auth, userEmail )
+     .then(() => {
+      alert("Please check your email")
+     })
+     .catch((error) => {
+      console.log("error:", error);
+     });
    }
 
   return (
@@ -38,7 +56,7 @@ const Login = () => {
       <Form onSubmit={handleLogin}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
-          <Form.Control type="email" name='email' placeholder="Enter email" />
+          <Form.Control onBlur={handleEmailBlur} type="email" name='email' placeholder="Enter email" />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -48,13 +66,13 @@ const Login = () => {
           { success && <p>Log in Successfully</p>}
          <div className='d-flex'>
           <Button variant="primary" type="Register">
-          Submit
+          Log in
         </Button>
         <br></br>
          <p className=' ms-2'><small> New to this website, please  <NavLink to="/register">Register</NavLink> </small></p>
       </div>
       </Form>
-     <p> Forget Password? <button onClick={handleForgotPassword} type="button" className="btn btn-link"> Please Reset</button></p>
+     <p> Forget Password? <button onClick={handleForgotPassword} type="button" className="btn btn-link">Reset Password </button></p>
     </div>
   );
 };
